@@ -54,5 +54,19 @@ describe('Component', () => {
 
       expect(actions.onIncrement).toBeCalled();
     });
+
+    it('should not call increment function if current count is even', () => {
+      const actions = {
+        onIncrement: jest.fn()
+      };
+
+      const initialState = [{count: 4}];
+      const component = shallow(<Counter value={initialState} onIncrement={actions.onIncrement} />);
+      const thirdButton = component.find('button#btn__increment_if_odd');
+
+      thirdButton.simulate('click');
+
+      expect(actions.onIncrement).not.toBeCalled();
+    });
   });
 });
