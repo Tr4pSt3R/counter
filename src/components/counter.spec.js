@@ -5,11 +5,35 @@ import { shallow, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 configure({ adapter: new Adapter() });
 
+function setup(initialCount) {
+  let initialState = [{count: initialCount}];
+
+  const actions = {
+    onIncrement: jest.fn(),
+    onDecrement: jest.fn()
+  };
+  const component = shallow(<Counter
+                              value={initialState}
+                              onIncrement={actions.onIncrement}
+                              onDecrement={actions.onDecrement}
+                           />);
+  const incrementBtn = component.find('#btn__increment');
+  const decrementBtn = component.find('#btn__decrement');
+  const incrementIfOddBtn = component.find('button#btn__increment_if_odd');
+
+  return {
+    component,
+    actions,
+    incrementBtn,
+    decrementBtn,
+    incrementIfOddBtn
+  };
+};
+
 describe('Component', () => {
   describe('.counter', () => {
     it('should display count', () => {
-      let initialState = [{count: 0}];
-      const component = shallow(<Counter value={initialState} />);
+      const { component } = setup(0);
 
       expect(component.find('.CounterApp').text()).toMatch(
         'Clicked: 0 times'
@@ -17,68 +41,40 @@ describe('Component', () => {
     });
 
     it('first button should call onIncrement', () => {
-      let initialState = [{count: 0}];
-      const onIncrement = jest.fn();
-      const component = shallow(<Counter value={initialState} onIncrement={onIncrement} />);
-      const increment_btn = component.find('#btn__increment');
+      const { actions, incrementBtn } = setup(0);
 
-      increment_btn.simulate('click');
+      incrementBtn.simulate('click');
 
-      expect(onIncrement).toHaveBeenCalled();
+      expect(actions.onIncrement).toHaveBeenCalled();
     });
 
     it('second button should call onDecrement', () => {
-      const actions = {
-        onDecrement: jest.fn()
-      };
+      const { actions, decrementBtn } = setup(0);
 
-      let initialState = [{count: 0}];
-      const component = shallow(<Counter value={initialState} onDecrement={actions.onDecrement} />);
-      const second_button = component.find('#btn__decrement');
-
-      second_button.simulate('click');
+      decrementBtn.simulate('click');
 
       expect(actions.onDecrement).toBeCalled();
     });
 
     it('should call increment function if current count is odd', () => {
-      const actions = {
-        onIncrement: jest.fn()
-      };
+      const { actions, incrementIfOddBtn } = setup(3);
 
-      const initialState = [{count: 3}];
-      const component = shallow(<Counter value={initialState} onIncrement={actions.onIncrement}/>);
-      const thirdButton = component.find('button#btn__increment_if_odd');
-
-      thirdButton.simulate('click');
+      incrementIfOddBtn.simulate('click');
 
       expect(actions.onIncrement).toBeCalled();
     });
 
     it('should not call increment function if current count is even', () => {
-      const actions = {
-        onIncrement: jest.fn()
-      };
+      const { actions, incrementIfOddBtn } = setup(4);
 
-      const initialState = [{count: 4}];
-      const component = shallow(<Counter value={initialState} onIncrement={actions.onIncrement} />);
-      const thirdButton = component.find('button#btn__increment_if_odd');
-
-      thirdButton.simulate('click');
+      incrementIfOddBtn.simulate('click');
 
       expect(actions.onIncrement).not.toBeCalled();
     });
 
     it('should increment when count is negative but odd', () => {
-      const actions = {
-        onIncrement: jest.fn()
-      };
-
-      const initialState = [{count: -3}];
-      const component = shallow(<Counter value={initialState} onIncrement={actions.onIncrement} />);
-      const thirdButton = component.find('button#btn__increment_if_odd');
-
-      thirdButton.simulate('click');
+      const { actions, incrementIfOddBtn } = setup(-3);
+      incrementIfOddBtn.simulate('click');
 
       expect(actions.onIncrement).toBeCalled();
     });
