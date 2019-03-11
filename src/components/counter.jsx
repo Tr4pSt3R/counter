@@ -5,7 +5,7 @@ class Counter extends React.Component {
     const { value, onIncrement } = this.props;
     let count = value[value.length - 1].count;
 
-    if ((count % 2) === 1) {
+    if ((Math.abs(count) % 2) === 1) {
       onIncrement();
     }
   };

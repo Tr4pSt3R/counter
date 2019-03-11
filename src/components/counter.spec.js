@@ -68,5 +68,19 @@ describe('Component', () => {
 
       expect(actions.onIncrement).not.toBeCalled();
     });
+
+    it('should increment when count is negative but odd', () => {
+      const actions = {
+        onIncrement: jest.fn()
+      };
+
+      const initialState = [{count: -3}];
+      const component = shallow(<Counter value={initialState} onIncrement={actions.onIncrement} />);
+      const thirdButton = component.find('button#btn__increment_if_odd');
+
+      thirdButton.simulate('click');
+
+      expect(actions.onIncrement).toBeCalled();
+    });
   });
 });
