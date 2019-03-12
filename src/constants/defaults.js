@@ -1,0 +1,1 @@
+export const ASYNC_TRIGGER = 1000;

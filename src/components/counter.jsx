@@ -1,4 +1,5 @@
 import React from 'react';
+import * as settings from '../constants/defaults';
 
 class Counter extends React.Component {
   incrementIfOdd = () => {
@@ -8,6 +9,12 @@ class Counter extends React.Component {
     if ((Math.abs(count) % 2) === 1) {
       onIncrement();
     }
+  };
+
+  incrementAsync = () => {
+    setTimeout(()=>{
+      this.props.onIncrement();
+    }, settings.ASYNC_TRIGGER);
   };
 
   render() {
@@ -27,6 +34,9 @@ class Counter extends React.Component {
         <button id='btn__decrement' onClick={onDecrement}>-</button>
         <button id='btn__increment_if_odd' onClick={ this.incrementIfOdd }>
           Increment (if odd)
+        </button>
+        <button id='btn__increment_async' onClick={ this.incrementAsync }>
+          Increment async
         </button>
       </div>
     )

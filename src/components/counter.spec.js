@@ -1,6 +1,7 @@
 import React from 'react';
 import Counter from './counter';
 import { shallow, configure } from 'enzyme';
+import * as settings from '../constants/defaults';
 
 import Adapter from 'enzyme-adapter-react-16';
 configure({ adapter: new Adapter() });
@@ -20,15 +21,17 @@ function setup(initialCount) {
   const incrementBtn = component.find('#btn__increment');
   const decrementBtn = component.find('#btn__decrement');
   const incrementIfOddBtn = component.find('button#btn__increment_if_odd');
+  const incrementAsyncBtn = component.find('button#btn__increment_async');
 
   return {
     component,
     actions,
     incrementBtn,
     decrementBtn,
-    incrementIfOddBtn
-  };
-};
+    incrementIfOddBtn,
+    incrementAsyncBtn
+  }
+}
 
 describe('Component', () => {
   describe('.counter', () => {
@@ -77,6 +80,27 @@ describe('Component', () => {
       incrementIfOddBtn.simulate('click');
 
       expect(actions.onIncrement).toBeCalled();
+    });
+
+    it('should not run before the set-time for triggering', (done) => {
+      const { actions, incrementAsyncBtn } = setup(0);
+
+      incrementAsyncBtn.simulate('click');
+
+      setTimeout(() => {
+        expect(actions.onIncrement).not.toBeCalled();
+        done();
+      }, settings.ASYNC_TRIGGER - 2);
+    });
+
+    it('should run increment asynchronously after set-time for triggering', (done) => {
+      const { actions, incrementAsyncBtn } = setup(0);
+      incrementAsyncBtn.simulate('click');
+
+      setTimeout(()=>{
+        expect(actions.onIncrement).toBeCalled();
+        done();
+      }, settings.ASYNC_TRIGGER + 2);
     });
   });
 });
